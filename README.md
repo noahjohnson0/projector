@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# projector
+
+A centralized launchpad for your projects. Scan a folder, detect project types, run multiple dev servers at once, and view thumbnails.
+
+## Features
+
+- **Folder-based discovery** – Configure a folder where your projects live (e.g. `~/repos`)
+- **Project type detection** – Automatically detects Next.js, React, Vite, Vue, Node, Python, Rust, and Go
+- **Multi-server runner** – Start and stop dev servers for many projects at once
+- **Thumbnails** – Add `thumbnail.png`, `screenshot.png`, or `preview.png` in a project root for a custom thumbnail
+- **projector excluded** – When your projects folder contains project-hub, it’s excluded from the list
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:4000](http://localhost:4000), click the settings icon, and set your projects folder path (e.g. `/Users/you/repos` or the parent of where project-hub lives).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Usage
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Configure** – Open Settings and set your projects folder path.
+2. **Scan** – projector scans for subdirectories and detects types.
+3. **Run** – Click the play button on a project to start its dev server.
+4. **Open** – When a server is running, use the external link to open it in a new tab.
+5. **Copy path** – Use the copy icon to copy the project path to the clipboard.
 
-## Learn More
+## Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js 16
+- shadcn/ui
+- Tailwind CSS

@@ -20,6 +20,9 @@
 # production
 /build
 
+# project-hub config (user-specific)
+.project-hub-config.json
+
 # misc
 .DS_Store
 *.pem
