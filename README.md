@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/logo.png" alt="projector" width="200">
+</p>
+
 # projector
 
 A centralized launchpad for your projects. Scan a folder, detect project types, run multiple dev servers at once, and view thumbnails.
@@ -32,3 +36,7 @@ Open [http://localhost:4000](http://localhost:4000), click the settings icon, an
 - Next.js 16
 - shadcn/ui
 - Tailwind CSS
+
+## Screenshot
+
+![projector screenshot](docs/assets/screenshot.png)
