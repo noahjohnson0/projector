@@ -1,11 +1,14 @@
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo-dark.png">
-    <img src="docs/assets/logo-light.png" alt="projector" width="200">
-  </picture>
-</p>
-
-# projector
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="220" valign="middle">
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo-dark.png">
+<img src="docs/assets/logo-light.png" alt="projector" width="200">
+</picture>
+</td>
+<td valign="middle"><h1>P&nbsp;R&nbsp;O&nbsp;J&nbsp;E&nbsp;C&nbsp;T&nbsp;O&nbsp;R</h1></td>
+</tr>
+</table>
 
 A centralized launchpad for your projects. Scan a folder, detect project types, run multiple dev servers at once, and view thumbnails.
 
