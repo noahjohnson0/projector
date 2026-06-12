@@ -3,6 +3,7 @@ import { Dashboard } from "@/components/dashboard";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LayoutGrid, LayoutDashboard, Projector } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Home() {
   return (
@@ -12,6 +13,9 @@ export default function Home() {
           <div className="container flex h-14 items-center gap-2 px-4">
             <Projector className="h-6 w-6 shrink-0" />
             <h1 className="text-xl font-bold tracking-tight">projector</h1>
+            <div className="ml-auto">
+              <ThemeToggle />
+            </div>
           </div>
         </header>
         <main className="container px-4 py-8">

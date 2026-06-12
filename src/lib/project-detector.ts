@@ -14,6 +14,13 @@ export type ProjectType =
   | "xcode"
   | "unknown";
 
+export interface GitHubRemoteInfo {
+  owner: string;
+  repo: string;
+  url: string;
+  gitUrl: string;
+}
+
 export interface ProjectInfo {
   name: string;
   path: string;
@@ -22,6 +29,8 @@ export interface ProjectInfo {
   port?: number;
   devCommand?: string;
   hasThumbnail: boolean;
+  /** GitHub remote when project has github.com origin */
+  github?: GitHubRemoteInfo;
   /** Xcode: project bundle path (.xcodeproj or .xcworkspace) if different from path. */
   xcodeProjectPath?: string;
   /** Xcode: build target names from the project. */

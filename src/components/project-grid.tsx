@@ -5,6 +5,7 @@ import { ProjectCard } from "./project-card";
 import { SettingsDialog } from "./settings-dialog";
 import { FileBrowserDialog } from "./file-browser-dialog";
 import { ServerLogsDialog } from "./server-logs-dialog";
+import { ProjectDetailPanel } from "./project-detail-panel";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -16,6 +17,9 @@ import {
 } from "@/components/ui/select";
 import { RefreshCw } from "lucide-react";
 import type { ProjectInfo } from "@/lib/project-detector";
+import type { GitHubRepoInfo } from "@/lib/github";
+
+export type { GitHubRepoInfo };
 
 type LoadProgress = {
   currentProject: string;
@@ -74,13 +78,46 @@ export function ProjectGrid() {
   const [configured, setConfigured] = useState(false);
   const [sortBy, setSortBy] = useState<SortOption>("name-asc");
   const [fileBrowserProject, setFileBrowserProject] = useState<ProjectInfo | null>(null);
+  const [detailProject, setDetailProject] = useState<ProjectInfo | null>(null);
   const [logsDialogProject, setLogsDialogProject] = useState<{ path: string; name: string } | null>(null);
+  const [repoMetadata, setRepoMetadata] = useState<Record<string, GitHubRepoInfo>>({});
   const sortedProjects = useMemo(() => sortProjects(projects, sortBy), [projects, sortBy]);
 
-  const fetchProjects = useCallback(async () => {
+  const githubReposKey = useMemo(
+    () =>
+      projects
+        .filter((p) => p.github)
+        .map((p) => `${p.github!.owner}/${p.github!.repo}`)
+        .sort()
+        .join(","),
+    [projects]
+  );
+
+  useEffect(() => {
+    if (loading || !githubReposKey) return;
+    const repos = githubReposKey
+      .split(",")
+      .filter(Boolean)
+      .map((s) => {
+        const [owner, repo] = s.split("/");
+        return { owner: owner!, repo: repo! };
+      });
+    if (repos.length === 0) return;
+    fetch("/api/github/repos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ repos }),
+    })
+      .then((r) => r.json())
+      .then((data) => setRepoMetadata(data.repos ?? {}))
+      .catch(() => {});
+  }, [loading, githubReposKey]);
+
+  const fetchProjects = useCallback(async (refresh = false) => {
     setLoadProgress(null);
     setProjects([]);
-    const res = await fetch("/api/projects/stream");
+    setRepoMetadata({});
+    const res = await fetch(`/api/projects/stream${refresh ? "?refresh=true" : ""}`);
     if (!res.ok || !res.body) {
       setProjects([]);
       setConfigured(false);
@@ -156,7 +193,7 @@ export function ProjectGrid() {
   const refresh = useCallback(async () => {
     setLoading(true);
     fetchServers().catch(() => {}); // Run in background, don't block
-    await fetchProjects(); // Stream drives loading state via scan_complete
+    await fetchProjects(true); // Force rescan on explicit refresh
     setLoading(false);
   }, [fetchProjects, fetchServers]);
 
@@ -198,7 +235,7 @@ export function ProjectGrid() {
         <div className="w-full max-w-md space-y-2">
           <p className="text-sm font-medium text-muted-foreground">
             {loadProgress
-              ? `Calculating size: ${loadProgress.currentProject} (${loadProgress.index}/${loadProgress.total})`
+              ? `${loading ? "Scanning" : "Calculating size"}: ${loadProgress.currentProject} (${loadProgress.index}/${loadProgress.total})`
               : "Scanning projects…"}
           </p>
           <Progress value={progressPercent} className="h-2" />
@@ -238,7 +275,7 @@ export function ProjectGrid() {
         <div className="flex items-center gap-2 rounded-lg border bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
           <RefreshCw className="h-4 w-4 animate-spin shrink-0" />
           <span>
-            Calculating sizes: {loadProgress.currentProject} ({loadProgress.index}/{loadProgress.total})
+            {loading ? "Scanning" : "Calculating sizes"}: {loadProgress.currentProject} ({loadProgress.index}/{loadProgress.total})
           </span>
           <Progress
             value={loadProgress.total ? Math.round((loadProgress.index / loadProgress.total) * 100) : 0}
@@ -273,16 +310,31 @@ export function ProjectGrid() {
           <ProjectCard
             key={project.path}
             project={project}
+            repoMetadata={
+              project.github
+                ? repoMetadata[`${project.github.owner}/${project.github.repo}`]
+                : undefined
+            }
             isRunning={runningServers.has(project.path)}
             runningPort={runningServers.get(project.path)}
             onStart={() => handleStart(project)}
             onStop={() => handleStop(project)}
             onRefresh={fetchServers}
-            onOpenFiles={setFileBrowserProject}
+            onOpenFiles={setDetailProject}
             onOpenLogs={(p) => setLogsDialogProject({ path: p.path, name: p.name })}
           />
         ))}
       </div>
+      <ProjectDetailPanel
+        project={detailProject}
+        repoMetadata={
+          detailProject?.github
+            ? repoMetadata[`${detailProject.github.owner}/${detailProject.github.repo}`]
+            : undefined
+        }
+        open={detailProject != null}
+        onOpenChange={(open) => !open && setDetailProject(null)}
+      />
       <FileBrowserDialog
         project={fileBrowserProject}
         open={fileBrowserProject != null}

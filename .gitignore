@@ -22,6 +22,7 @@
 
 # project-hub config (user-specific)
 .project-hub-config.json
+.projector-cache.json
 
 # misc
 .DS_Store
